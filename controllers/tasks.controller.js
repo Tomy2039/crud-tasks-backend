@@ -100,9 +100,39 @@ const putOnetask = (req, res) => {
 
 }
 
+const deleteOnetask = (req, res) =>{
+    const conexion = getConnection();
+    const { id } = req.params;
+
+    conexion.connect(err => {
+        if (err) {
+            console.error('Error conectando a la base de datos:', err);
+            return res.status(500).send('Error conectando a la base de datos');
+        }
+
+        const values = [id];
+        conexion.query('DELETE FROM tasks WHERE id = ?', values, (err, results) => {
+            if (err) {
+                console.error('Error al eliminar esta tarea:', err);
+                return res.status(500).send('Error al eliminar');
+            } else {
+                return res.status(200).send('tarea eliminada con exito');
+            }
+
+            res.json(results);
+            conexion.end();
+
+            if (results.length === 0) {
+                return res.status(404).send('tarea no encontrada');
+            }
+        });
+    })
+}
+
 module.exports = {
     getAllTasks,
     getOnetask,
     postOnetask,
     putOnetask,
+    deleteOnetask,
 }
