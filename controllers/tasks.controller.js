@@ -1,43 +1,42 @@
-const conexion = require('../db/database');
-const getConnection = require('../db/database');
+import { conexion } from '../db/database.js'
 
-const getAllTasks = (req, res) => {
-    const conexion = getConnection();
-    conexion.connect(err => {
+export const getAllTasks = (req, res) => {
+    const getConnection = conexion();
+    getConnection.connect(err => {
         if (err) {
             console.error('Error conectando a la base de datos:', err);
             return res.status(500).send('Error conectando a la base de datos');
         }
 
-        conexion.query('SELECT * FROM tasks', (err, results) => {
+        getConnection.query('SELECT * FROM tasks', (err, results) => {
             if (err) {
                 console.error('Error al obtener las tareas:', err);
                 return res.status(500).send('Error al obtener las tareas');
             }
             res.json(results);
-            conexion.end();
+            getConnection.end();
         });
     });
 };
 
-const getOnetask = (req, res) =>{
-    const conexion = getConnection();
+export const getOnetask = (req, res) =>{
+    const getConnection = conexion();
     const { id } = req.params;
 
-    conexion.connect(err => {
+    getConnection.connect(err => {
         if (err) {
             console.error('Error conectando a la base de datos:', err);
             return res.status(500).send('Error conectando a la base de datos');
         }
 
         const values = [id];
-        conexion.query('SELECT * FROM tasks WHERE id = ?', values, (err, results) => {
+        getConnection.query('SELECT * FROM tasks WHERE id = ?', values, (err, results) => {
             if (err) {
                 console.error('Error al obtener esta tarea:', err);
                 return res.status(500).send('Error al obtener las tareas');
             }
             res.json(results[0]);
-            conexion.end();
+            getConnection.end();
 
             if (results.length === 0) {
                 return res.status(404).send('tarea no encontrada');
@@ -46,42 +45,42 @@ const getOnetask = (req, res) =>{
     })
 }
 
-const postOnetask = (req, res) => {
-    const conexion = getConnection();
+export const postOnetask = (req, res) => {
+    const getConnection = conexion();
     const { title, description, isComplete } = req.body;
-    conexion.connect(err => {
+    getConnection.connect(err => {
         if (err) {
             console.error('Error conectando a la base de datos:', err);
             return res.status(500).send('Error conectando a la base de datos');
         }
         const values = [title, description, isComplete];
 
-        conexion.query('INSERT INTO tasks (title, description, isComplete) VALUES (?, ?, ?)', values, (err, results) => {
+        getConnection.query('INSERT INTO tasks (title, description, isComplete) VALUES (?, ?, ?)', values, (err, results) => {
             if (err) {
                 console.error('Error al insertar esta tarea:', err);
                 return res.status(500).send('Error al crear las tareas');
             } else {
-                return res.status(200).send('tarea insertada correctamente')
+                return res.status(201).send('tarea creada correctamente')
             }
             res.json(results);
-            conexion.end();
+            getConnection.end();
         });
     })
 }
 
-const putOnetask = (req, res) => {
-    const conexion = getConnection();
+export const putOnetask = (req, res) => {
+    const getConnection = conexion()
     const { id } = req.params;
     const { title, description, isComplete } = req.body;
 
-    conexion.connect(err => {
+    getConnection.connect(err => {
         if (err) {
             console.error('Error conectando a la base de datos:', err);
             return res.status(500).send('Error conectando a la base de datos');
         }
 
         const values = [title, description, isComplete, id]
-        conexion.query('UPDATE tasks SET title = ?, description = ?, isComplete = ? WHERE id = ?', values, (err, results) =>{
+        getConnection.query('UPDATE tasks SET title = ?, description = ?, isComplete = ? WHERE id = ?', values, (err, results) =>{
             if (err) {
                 console.error('Error al actualizar esta tarea:', err);
                 return res.status(500).send('Error al crear las tareas');
@@ -94,24 +93,24 @@ const putOnetask = (req, res) => {
             }
 
             res.send(results);
-            conexion.end();
+            getConnection.end();
         })
     })
 
 }
 
-const deleteOnetask = (req, res) =>{
-    const conexion = getConnection();
+export const delOnetask = (req, res) =>{
+    const getConnection = conexion()
     const { id } = req.params;
 
-    conexion.connect(err => {
+    getConnection.connect(err => {
         if (err) {
             console.error('Error conectando a la base de datos:', err);
             return res.status(500).send('Error conectando a la base de datos');
         }
 
         const values = [id];
-        conexion.query('DELETE FROM tasks WHERE id = ?', values, (err, results) => {
+        getConnection.query('DELETE FROM tasks WHERE id = ?', values, (err, results) => {
             if (err) {
                 console.error('Error al eliminar esta tarea:', err);
                 return res.status(500).send('Error al eliminar');
@@ -120,19 +119,11 @@ const deleteOnetask = (req, res) =>{
             }
 
             res.json(results);
-            conexion.end();
+            getConnection.end();
 
             if (results.length === 0) {
                 return res.status(404).send('tarea no encontrada');
             }
         });
     })
-}
-
-module.exports = {
-    getAllTasks,
-    getOnetask,
-    postOnetask,
-    putOnetask,
-    deleteOnetask,
 }

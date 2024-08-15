@@ -1,7 +1,7 @@
-const mysql = require('mysql2');
+import { createConnection } from 'mysql2/promise';
 
 const conexion = () => {
-    return mysql.createConnection({
+    return createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
@@ -9,4 +9,4 @@ const conexion = () => {
     });
 };
 
-module.exports = conexion;
+export { conexion }

@@ -1,7 +1,7 @@
-const express = require('express');
-const morgan = require('morgan');
-const cors = require('cors');
-const router = require('./routes/tasks.routes');
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+import { taskRoutes } from './routes/tasks.routes.js';
 
 const app = express();
 
@@ -10,9 +10,9 @@ app.set('port', process.env.PORT || 4000);
 
 // Middlewares
 app.use(morgan('dev')); 
-app.use(cors()); // Habilitar CORS para permitir solicitudes desde otros dominios
-app.use(express.json()); // Parsear cuerpos de solicitudes JSON
-app.use(router); // Usar las rutas definidas
+app.use(cors()); 
+app.use(express.json()); 
+app.use("/tasks", taskRoutes); 
 
 // Iniciar el servidor
 app.listen(app.get('port'), () => {
