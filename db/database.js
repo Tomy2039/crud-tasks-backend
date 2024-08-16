@@ -1,12 +1,21 @@
 import mysql from 'mysql2/promise';
 
-const conexion = async () => {
-    return await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'tasks_db'
-    });
-};
+export const conexion = () => {
+ 
+    try {
+        return mysql.createConnection({
+            host: "localhost",
+            user: "root",
+            password: '',
+            database: "tasks_db"
+        })
 
-export { conexion }
+        console.log("conectado la base de datos")
+
+        return conexion
+    } catch (error) {
+        console.error("Error a al conectar la base de datos ")
+        process.exit(1);
+    }
+
+}
